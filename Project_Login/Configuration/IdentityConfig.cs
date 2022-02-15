@@ -20,7 +20,7 @@ public static class IdentityConfig
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         });
 
-        services.AddIdentityCore<IdentityUser>()
+        services.AddIdentity<IdentityUser, IdentityRole>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<LoginDbContext>()
             .AddErrorDescriber<IdentityMensagensPortugues>()

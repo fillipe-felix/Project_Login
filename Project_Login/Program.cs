@@ -1,4 +1,9 @@
+using FluentValidation.AspNetCore;
+
 using Project_Login.Configuration;
+using Project_Login.Filters;
+using Project_Login.Persistence;
+using Project_Login.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +15,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddIdentityConfiguration(builder.Configuration);
+
+builder.Services.ResolveDependencies();
+
+builder.Services.AddControllers(options => options.Filters.Add(typeof(ValidationFilters)))
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterUserViewModelValidator>());
+
+
 
 var app = builder.Build();
 
