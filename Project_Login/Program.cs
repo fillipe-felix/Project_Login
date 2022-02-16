@@ -1,5 +1,7 @@
 using FluentValidation.AspNetCore;
 
+using Microsoft.EntityFrameworkCore;
+
 using Project_Login.Configuration;
 using Project_Login.Filters;
 using Project_Login.Persistence;
@@ -14,7 +16,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<MeuDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
 builder.Services.AddIdentityConfiguration(builder.Configuration);
+
+builder.Services.WebApiConfig();
 
 builder.Services.ResolveDependencies();
 
@@ -32,9 +41,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseMvcConfiguration();
 
 app.MapControllers();
 

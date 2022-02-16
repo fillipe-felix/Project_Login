@@ -16,16 +16,13 @@ public class AuthService : IAuthService
 {
     private readonly AppSettings _appSettings;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
-    
+
 
     public AuthService(IOptions<AppSettings> appSettings, 
-                       UserManager<IdentityUser> userManager, 
-                       SignInManager<IdentityUser> signInManager)
+                       UserManager<IdentityUser> userManager)
     {
         _appSettings = appSettings.Value;
         _userManager = userManager;
-        _signInManager = signInManager;
     }
 
     public async Task<LoginResponseViewModel> GerarJwt(string loginUserEmail)
@@ -58,13 +55,13 @@ public class AuthService : IAuthService
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
-        var token = tokenHandler.CreateJwtSecurityToken(new SecurityTokenDescriptor
+        var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
         {
             Issuer = _appSettings.Emissor,
             Audience = _appSettings.ValidoEm,
             Subject = identityClaims,
             Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiracaoHoras),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         });
 
         var encodedToken = tokenHandler.WriteToken(token);
